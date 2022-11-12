@@ -9,6 +9,8 @@ readme = "README.md"
 python = "^3.9"
 numpy = "^1.23.4"
 flask = "^2.2.2"
+flask-mysql = "^1.5.2"
+loguru = "^0.6.0"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -17,6 +19,8 @@ commitizen = "^2.37.0"
 black = {version = "^22.10.0", allow-prereleases = true}
 ipykernel = "^6.17.0"
 pandas = "^1.5.1"
+numba = "^0.56.4"
+matplotlib = "^3.6.2"
 
 [build-system]
 requires = ["poetry-core"]
