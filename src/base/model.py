@@ -1,3 +1,6 @@
+import os
+
+import joblib
 import numpy as np
 
 from loguru import logger
@@ -66,3 +69,29 @@ class LinearRegression:
         preds = X @ self._W + self._b
         logger.debug(f"Preds shape: {preds.shape} .")
         return preds
+
+    @staticmethod
+    def load_model(file_name: os.PathLike):
+        """Load the pre-trained model from a source.
+
+        Args:
+            file_name (os.PathLike): Path from where the model will be loaded.
+
+        Returns:
+            The pre-trained model.
+        """
+        model = joblib.load(file_name)
+        logger.info(f"Loaded model from {file_name} .")
+        return model
+
+    def save_model(self, file_name: os.PathLike) -> None:
+        """Save the pre-trained model to a target.
+
+        Args:
+            file_name (os.PathLike): Path where the model will be saved to.
+        """
+        directory = os.path.dirname(file_name)
+        logger.debug(f"Model directory: {directory} .")
+        os.makedirs(directory, exist_ok=True)
+        joblib.dump(self, file_name)
+        logger.info(f"Saved model to {file_name} .")
