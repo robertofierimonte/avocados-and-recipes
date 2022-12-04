@@ -93,10 +93,12 @@ def recipe(recipe_name: str):
                     db.session.add(ingredient)
                 # TODO: Add the recipe and the ingredients to the mapping table
                 recipe_ingredient = RecipeIngredients(
-                    unit_of_measure=ing_uom, quantity=ing_qty
+                    recipe_id=recipe_id,
+                    ingredient_id=ing_id,
+                    unit_of_measure=ing_uom,
+                    quantity=ing_qty,
                 )
-                recipe_ingredient.ingredient = ingredient
-                recipe.ingredients.append(ingredient)
+                db.session.add(recipe_ingredient)
             db.session.commit()
             return recipe_schema.jsonify(recipe)
         # TODO: If the recipe exists already, return an error

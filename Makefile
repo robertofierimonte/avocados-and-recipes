@@ -24,7 +24,7 @@ mysql-drop-schema: ## Drop the `recipes` schema in case it needs to be recreated
 	@ mysql -h ${MYSQL_HOST} -u ${MYSQL_ROOT_USER} -p${MYSQL_ROOT_PASSWORD} -e "DROP SCHEMA IF EXISTS recipes;"
 
 mysql-create-tables: ## Create all the relevant tables and triggers in the `recipe` schema
-	@ mysql -h ${MYSQL_HOST} -iu ${MYSQL_ROOT_USER} -p${MYSQL_ROOT_PASSWORD} recipes < src/queries/q_create_tables.sql
+	@ mysql -h ${MYSQL_HOST} -iu ${MYSQL_ROOT_USER} -p${MYSQL_ROOT_PASSWORD} recipes < scripts/q_create_tables.sql
 
 mysql-setup-schema: ## Drop the `recipe` schema if present and re-create it as well as the tables and the triggers
 	$(MAKE) mysql-drop-schema && $(MAKE) mysql-create-schema && $(MAKE) mysql-create-tables

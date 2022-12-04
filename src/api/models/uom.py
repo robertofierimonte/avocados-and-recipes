@@ -1,37 +1,29 @@
 from datetime import datetime
 
-from sqlalchemy import text, Float, ForeignKey, CheckConstraint
+from sqlalchemy import text, Float, ForeignKey, CheckConstraint, Column
 from sqlalchemy.schema import FetchedValue
 
 from src.api.database import db, ma
 
 
-class UOMConversion(db.Model):
-    """Declarative model for the uom_conversion association table."""
-
-    __tablename__ = "uom_conversion"
-    uom_from = db.Column(
-        ForeignKey("unit_of_measure.name", onupdate="CASCADE"), nullable=False
-    )
-    uom_to = db.Column(
-        ForeignKey("unit_of_measure.name", onupdate="CASCADE"), nullable=False
-    )
-    factor = db.Column(Float, nullable=False)
-    __table_args__ = (CheckConstraint("factor > 0"),)
-    # Define a joint primary key
-    __mapper_args__ = {"primary_key": [uom_from, uom_to]}
-    # Define relationships between the association table and the relevant
-    # entities
-    _from = db.relationship(
-        "UnitOfMeasure",
-        back_populates="uoms_to",
-        primaryjoin="UOMConversion.uom_from == UnitOfMeasure.name",
-    )
-    _to = db.relationship(
-        "UnitOfMeasure",
-        back_populates="uoms_from",
-        primaryjoin="UOMConversion.uom_to == UnitOfMeasure.name",
-    )
+uom_conversion = db.Table(
+    "uom_conversion",
+    db.Model.metadata,
+    Column(
+        "uom_from",
+        ForeignKey("unit_of_measure.name", onupdate="CASCADE"),
+        nullable=False,
+        primary_key=True,
+    ),
+    Column(
+        "uom_to",
+        ForeignKey("unit_of_measure.name", onupdate="CASCADE"),
+        nullable=False,
+        primary_key=True,
+    ),
+    Column("factor", Float, nullable=False),
+    CheckConstraint("factor > 0"),
+)
 
 
 class UnitOfMeasure(db.Model):
@@ -46,8 +38,13 @@ class UnitOfMeasure(db.Model):
         server_default=text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"),
         server_onupdate=FetchedValue(),
     )
-    uoms_from = db.relationship("UOMConversion", back_populates="_to")
-    uoms_to = db.relationship("UOMConversion", back_populates="_from")
+    uoms_to = db.relationship(
+        "UnitOfMeasure",
+        secondary="uom_conversion",
+        primaryjoin=name == uom_conversion.c.uom_from,
+        secondaryjoin=name == uom_conversion.c.uom_to,
+        back_populates="uoms_to",
+    )
 
 
 class UnitOfMeasureSchema(ma.SQLAlchemySchema):
