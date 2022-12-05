@@ -3,31 +3,7 @@ from datetime import datetime
 from sqlalchemy import text, CheckConstraint, ForeignKey, Float
 from sqlalchemy.schema import FetchedValue
 
-from src.api.database import db, ma
-
-
-class RecipeIngredients(db.Model):
-    """Declarative model for the recipe_ingredients association table."""
-
-    __tablename__ = "recipe_ingredients"
-    recipe_id = db.Column(
-        ForeignKey("recipe.id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False
-    )
-    ingredient_id = db.Column(
-        ForeignKey("ingredient.id", ondelete="CASCADE", onupdate="CASCADE"),
-        nullable=False,
-    )
-    unit_of_measure = db.Column(
-        ForeignKey("unit_of_measure.name", onupdate="CASCADE"), nullable=False
-    )
-    quantity = db.Column(Float, nullable=False)
-    __table_args__ = (CheckConstraint("quantity > 0"),)
-    # Define a joint primary key
-    __mapper_args__ = {"primary_key": [recipe_id, ingredient_id]}
-    # Define relationships between the association table and the relevant
-    # entities
-    ingredient = db.relationship("Ingredient", back_populates="recipes")
-    recipe = db.relationship("Recipe", back_populates="ingredients")
+from src.api.database import db
 
 
 class Recipe(db.Model):
@@ -46,15 +22,6 @@ class Recipe(db.Model):
         server_onupdate=FetchedValue(),
     )
     ingredients = db.relationship("RecipeIngredients", back_populates="recipe")
-
-
-class RecipeSchema(ma.SQLAlchemySchema):
-    """Schema for a Recipe."""
-
-    class Meta:
-        """Schema for a recipe."""
-
-        schema = Recipe
 
 
 class Ingredient(db.Model):
@@ -82,10 +49,28 @@ class Ingredient(db.Model):
     recipes = db.relationship("RecipeIngredients", back_populates="ingredient")
 
 
-class IngredientSchema(ma.SQLAlchemySchema):
-    """Schema for an Ingredient."""
+class RecipeIngredients(db.Model):
+    """Declarative model for the recipe_ingredients association table."""
 
-    class Meta:
-        """Schema for an Ingredient."""
-
-        model = Ingredient
+    __tablename__ = "recipe_ingredients"
+    recipe_id = db.Column(
+        ForeignKey("recipe.id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
+        primary_key=True,
+    )
+    ingredient_id = db.Column(
+        ForeignKey("ingredient.id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
+        primary_key=True,
+    )
+    unit_of_measure = db.Column(
+        ForeignKey("unit_of_measure.name", onupdate="CASCADE"), nullable=False
+    )
+    quantity = db.Column(Float, nullable=False)
+    __table_args__ = (CheckConstraint("quantity > 0"),)
+    # Define a joint primary key
+    # __mapper_args__ = {"primary_key": [recipe_id, ingredient_id]}
+    # Define relationships between the association table and the relevant
+    # entities
+    ingredient = db.relationship("Ingredient", back_populates="recipes")
+    recipe = db.relationship("Recipe", back_populates="ingredients")

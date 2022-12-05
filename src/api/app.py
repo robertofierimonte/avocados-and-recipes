@@ -51,7 +51,7 @@ def get_recipes():
     """Get all the recipes."""
     all_recipes = Recipe.query.all()
     result = recipes_schema.dump(all_recipes)
-    return jsonify(result)
+    return jsonify(result), 200
 
 
 @app.route("/recipes/<recipe_name>", methods=["GET", "PUT", "POST", "DELETE"])
@@ -69,52 +69,55 @@ def recipe(recipe_name: str):
     # If POST, create a new recipe
     if request.method == "POST":
         # If the recipe does not already exist, create the recipe, then check
-        # all the ingredients. If any of the ingredients does not exist, create
-        # it and set the ref_unit_of_measure to the UOM specified in the
-        # recipe. Finally, add the recipe and the ingredients to the mapping
-        # table
+        # all the ingredients.
         if Recipe.query.get(recipe_id) is None:
             try:
                 ingredients = request.json.pop("ingredients")
-            # TODO: If the ingredients are not in the request, return an error
-            except KeyError:
+                recipe = Recipe(id=recipe_id, **request.json)
+                db.session.add(recipe)
+                # If any of the ingredients does not exist, create it and set
+                # the ref_unit_of_measure to the UOM specified in the recipe.
+                # Finally, add the recipe and the ingredients to the mapping
+                # table
+                for ing in ingredients:
+                    ing_name = ing["name"]
+                    ing_id = hash_string(ing_name, 18)
+                    ing_uom = ing["unit_of_measure"]
+                    ing_qty = ing["quantity"]
+                    ingredient = Ingredient(
+                        id=ing_id, name=ing_name, ref_unit_of_measure=ing_uom
+                    )
+                    if Ingredient.query.get(ing_id) is None:
+                        db.session.add(ingredient)
+                    # Add the recipe and the ingredient to the mapping table
+                    recipe_ingredient = RecipeIngredients(
+                        recipe_id=recipe_id,
+                        ingredient_id=ing_id,
+                        unit_of_measure=ing_uom,
+                        quantity=ing_qty,
+                    )
+                    db.session.add(recipe_ingredient)
+                # Commit all the changes to the database
+                db.session.commit()
+                return recipe_schema.jsonify(recipe)
+            # TODO: If the ingredients are not in the request, return an error (400)
+            except KeyError as e:
                 pass
-            recipe = Recipe(id=recipe_id, **request.json)
-            db.session.add(recipe)
-            for ing in ingredients:
-                ing_name = ing["name"]
-                ing_id = hash_string(ing_name, 18)
-                ing_uom = ing["unit_of_measure"]
-                ing_qty = ing["quantity"]
-                ingredient = Ingredient(
-                    id=ing_id, name=ing_name, ref_unit_of_measure=ing_uom
-                )
-                if Ingredient.query.get(ing_id) is None:
-                    db.session.add(ingredient)
-                # TODO: Add the recipe and the ingredients to the mapping table
-                recipe_ingredient = RecipeIngredients(
-                    recipe_id=recipe_id,
-                    ingredient_id=ing_id,
-                    unit_of_measure=ing_uom,
-                    quantity=ing_qty,
-                )
-                db.session.add(recipe_ingredient)
-            db.session.commit()
-            return recipe_schema.jsonify(recipe)
-        # TODO: If the recipe exists already, return an error
+        # If the recipe exists already, return an error (409)
         else:
-            pass
+            return jsonify({"error": "This recipe already exists"}), 409
 
     # If GET, get the recipe or return 404 Not Found
     elif request.method == "GET":
-        return recipe_schema.jsonify(Recipe.query.get_or_404(recipe_id))
+        recipe = Recipe.query.get_or_404(recipe_id)
+        return recipe_schema.jsonify(recipe)
 
-    # If PUT, update the recipe
+    # TODO: If PUT, update the recipe
     elif request.method == "PUT":
         recipe = Recipe.query.get_or_404(recipe_id)
 
-    # If DELETE, delete the recipe
-    else:
+    # TODO: If DELETE, delete the recipe
+    elif request.method == "DELETE":
         pass
 
 
@@ -122,18 +125,18 @@ def recipe(recipe_name: str):
 def ingredients():
     """Get all the ingredients."""
     all_ingredients = Ingredient.query.all()
-    result = recipes_schema.dump(all_ingredients)
-    return jsonify(result)
+    result = ingredients_schema.dump(all_ingredients)
+    return jsonify(result), 200
 
 
 @app.route("/ingredients/<ingredient_name>/recipes", methods=["GET"])
-def recipes_by_ingredient(ingredient_id: str):
+def recipes_by_ingredient(ingredient_name: str):
     """Get all the recipes given an ingredient.
 
     Args:
-        ingredient_id (str): Name of the ingredient
+        ingredient_name (str): Name of the ingredient
     """
-    pass
+    ing_name = Ingredient.query.filter(name=ingredient_name).all()
 
 
 if __name__ == "__main__":

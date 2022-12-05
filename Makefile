@@ -42,7 +42,6 @@ get-recipe-by-name: ## Make an API request to get a recipe by its name. Must spe
 	@ curl -X GET -H "Content-Type: application/json" \
 	http://localhost:5000/recipes/$(shell sed -r 's/[^A-Za-z[:space:]]//g' <<< '$(recipe)' | sed -r -E 's/[[:space:]]+/_/g' | tr '[:upper:]' '[:lower:]')
 
-post-recipe-by-name: ## Make an API request to post a recipe by its name. Must specify recipe=<recipe-name>
-	@ curl -X POST -H "Content-Type: application/json" \
-	-d "@$(shell sed -r 's/[^A-Za-z[:space:]]//g' <<< '$(recipe)' | sed -r -E 's/[[:space:]]+/_/g' | tr '[:upper:]' '[:lower:]').json" \
-	http://localhost:5000/recipes/$(shell sed -r 's/[^A-Za-z[:space:]]//g' <<< '$(recipe)' | sed -r -E 's/[[:space:]]+/_/g' | tr '[:upper:]' '[:lower:]')
+post-recipe-by-name: ## Make an API request to post a recipe by its name. Must specify recipe=<recipe-file-name>
+	@ curl -X POST -H "Content-Type: application/json" -d "@$(recipe).json" \
+	http://localhost:5000/recipes/$(recipe)
