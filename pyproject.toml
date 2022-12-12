@@ -1,7 +1,17 @@
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "1.0.0"
+tag_format = "v$major.$minor.$patch"
+update_changelog_on_bump = true
+version_files = [
+    "pyproject.toml:version",
+    "src/__version__.py"
+]
+
 [tool.poetry]
 name = "avocados-technical-task"
-version = "0.1.0"
-description = "Technical task about building a simple ML model in Numpy and a Flask API around it."
+version = "1.0.0"
+description = "Technical task about building a simple ML model in Numpy and a Flask Rest API for CRUD operations."
 authors = ["Roberto Fierimonte <roberto.fierimonte@gmail.com>"]
 readme = "README.md"
 
