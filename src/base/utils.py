@@ -1,3 +1,4 @@
+import re
 import hashlib
 
 
@@ -10,7 +11,9 @@ def clean_string(string: str) -> str:
     Returns:
         str: _description_
     """
-    pass
+    res = re.sub(r"[^A-Za-z\s]", "", string)
+    res = re.sub(r"\s", "_", res)
+    return res.lower()
 
 
 def hash_string(string: str, lenght: int) -> int:

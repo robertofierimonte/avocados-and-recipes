@@ -33,15 +33,29 @@ run-server-local: ## Run the REST API server locally
 	@ poetry run python -m flask --app src/api/app.py run --debugger
 
 get-all-recipes: ## Make an API request to get all the recipes
-	@ curl -X GET -H "Content-Type: application/json" http://localhost:5000/recipes
+	@ curl -X GET http://localhost:5000/recipes
 
 get-all-ingredients: ## Make an API request to get all the ingredients
-	@ curl -X GET -H "Content-Type: application/json" http://localhost:5000/ingredients
+	@ curl -X GET http://localhost:5000/ingredients
 
 get-recipe-by-name: ## Make an API request to get a recipe by its name. Must specify recipe=<recipe-name>
-	@ curl -X GET -H "Content-Type: application/json" \
-	http://localhost:5000/recipes/$(shell sed -r 's/[^A-Za-z[:space:]]//g' <<< '$(recipe)' | sed -r -E 's/[[:space:]]+/_/g' | tr '[:upper:]' '[:lower:]')
+	@ curl -X GET \
+	http://localhost:5000/recipes/$(shell export PYTHONPATH=${PWD} && poetry run python scripts/clean_string.py "$(recipe)")
 
-post-recipe-by-name: ## Make an API request to post a recipe by its name. Must specify recipe=<recipe-file-name>
-	@ curl -X POST -H "Content-Type: application/json" -d "@$(recipe).json" \
-	http://localhost:5000/recipes/$(recipe)
+get-recipes-by-ingredient: ## Make an API request to get all recipes given an ingredient. Must specify ingredient=<ingredient-name>
+	@ curl -X GET http://localhost:5000/ingredients/$(shell export PYTHONPATH=${PWD} && poetry run python scripts/clean_string.py "$(ingredient)")/recipes
+
+post-recipe-by-name: ## Make an API request to post a recipe by its name. Must specify recipe=<recipe-name>
+	@ curl -X POST -H "Content-Type: application/json" \
+	-d "@api_examples/post_$(shell export PYTHONPATH=${PWD} && poetry run python scripts/clean_string.py "$(recipe)").json" \
+	http://localhost:5000/recipes/$(shell export PYTHONPATH=${PWD} && poetry run python scripts/clean_string.py "$(recipe)")
+
+put-recipe-by-name: ## Make an API request to put (update) a recipe by its name. Must specify recipe=<recipe-name>
+	@ curl -X PUT -H "Content-Type: application/json" \
+	-d "@api_examples/put_$(shell export PYTHONPATH=${PWD} && poetry run python scripts/clean_string.py "$(recipe)").json" \
+	http://localhost:5000/recipes/$(shell export PYTHONPATH=${PWD} && poetry run python scripts/clean_string.py "$(recipe)")
+
+
+delete-recipe-by-name: ## Make an API request to delete a recipe by its name. Must sprcify recipe=<recipe-name>
+	@ curl -X DELETE \
+	http://localhost:5000/recipes/$(shell export PYTHONPATH=${PWD} && poetry run python scripts/clean_string.py "$(recipe)")

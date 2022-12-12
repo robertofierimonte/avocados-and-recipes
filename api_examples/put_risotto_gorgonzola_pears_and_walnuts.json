@@ -1,0 +1,19 @@
+{
+    "book": "Giallo Zafferano Blog",
+    "author": "Giallo Zafferano",
+    "ingredients": [
+        {
+            "name": "Walnut",
+            "quantity": 40
+        },
+        {
+            "name": "Vegetable Stock Cube",
+            "unit_of_measure": "unit",
+            "quantity": 1
+        },
+        {
+            "name": "Chicken Stock Cube",
+            "delete": "true"
+        }
+    ]
+}
