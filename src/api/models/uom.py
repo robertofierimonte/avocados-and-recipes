@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from sqlalchemy import text, Float, ForeignKey, CheckConstraint, Column
 from sqlalchemy.schema import FetchedValue
 
@@ -32,7 +30,7 @@ class UnitOfMeasure(db.Model):
     __tablename__ = "unit_of_measure"
     name = db.Column(db.String, primary_key=True)
     name_long = db.Column(db.String)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow())
+    created_at = db.Column(db.DateTime, server_default=text("CURRENT_TIMESTAMP"))
     updated_at = db.Column(
         db.DateTime,
         server_default=text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"),

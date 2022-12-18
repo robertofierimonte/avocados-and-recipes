@@ -1,0 +1,11 @@
+api_examples/
+containers/
+docs/
+data/
+notebooks/
+scripts/
+src/base/model.py
+src/base/preprocessing.py
+.dockerignore
+__pycache__
+.pytest_cache

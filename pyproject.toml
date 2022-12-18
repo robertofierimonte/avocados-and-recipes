@@ -19,7 +19,6 @@ readme = "README.md"
 python = "^3.9"
 numpy = "^1.23.4"
 flask = "^2.2.2"
-flask-mysql = "^1.5.2"
 loguru = "^0.6.0"
 joblib = "^1.2.0"
 flask-sqlalchemy = "^3.0.2"
@@ -27,8 +26,8 @@ marshmallow = "^3.19.0"
 flask-marshmallow = "^0.14.0"
 marshmallow-sqlalchemy = "^0.28.1"
 pymysql = "^1.0.2"
-mysqlclient = "^2.1.1"
 cryptography = "^38.0.3"
+gunicorn = "^20.1.0"
 
 
 [tool.poetry.group.dev.dependencies]

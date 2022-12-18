@@ -14,20 +14,20 @@ download-data: ## Download the dataset inside the `data` folder
 	rm -f data/avocados.zip
 
 mysql-create-user: ## Create a non-root MySQL user. Must have defined the environment variables in the .env file
-	@ mysql -h ${MYSQL_HOST} -u ${MYSQL_ROOT_USER} -p${MYSQL_ROOT_PASSWORD} -e "CREATE USER '${MYSQL_USER}'@'localhost' IDENTIFIED BY '${MYSQL_PASSWORD}';"
+	@ mysql -h ${MYSQL_HOST} -u root -p${MYSQL_ROOT_PASSWORD} -e "CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'${MYSQL_HOST}' IDENTIFIED BY '${MYSQL_PASSWORD}';"
 
 mysql-create-schema: ## Create a `recipes` schema to use for the project and grant object access to the newly created user
-	@ mysql -h ${MYSQL_HOST} -u ${MYSQL_ROOT_USER} -p${MYSQL_ROOT_PASSWORD} \
-	-e "CREATE SCHEMA IF NOT EXISTS recipes; GRANT SELECT, INSERT, UPDATE, DELETE on recipes.* TO ${MYSQL_USER}@${MYSQL_HOST};"
+	@ mysql -h ${MYSQL_HOST} -u root -p${MYSQL_ROOT_PASSWORD} \
+	-e "CREATE SCHEMA IF NOT EXISTS ${MYSQL_DATABASE}; GRANT SELECT, INSERT, UPDATE, DELETE on ${MYSQL_DATABASE}.* TO ${MYSQL_USER}@${MYSQL_HOST};"
 
 mysql-drop-schema: ## Drop the `recipes` schema in case it needs to be recreated
-	@ mysql -h ${MYSQL_HOST} -u ${MYSQL_ROOT_USER} -p${MYSQL_ROOT_PASSWORD} -e "DROP SCHEMA IF EXISTS recipes;"
+	@ mysql -h ${MYSQL_HOST} -u root -p${MYSQL_ROOT_PASSWORD} -e "DROP SCHEMA IF EXISTS ${MYSQL_DATABASE};"
 
 mysql-create-tables: ## Create all the relevant tables and triggers in the `recipe` schema
-	@ mysql -h ${MYSQL_HOST} -iu ${MYSQL_ROOT_USER} -p${MYSQL_ROOT_PASSWORD} recipes < scripts/q_create_tables.sql
+	@ mysql -h ${MYSQL_HOST} -iu root -p${MYSQL_ROOT_PASSWORD} ${MYSQL_DATABASE} < scripts/db/init.sql
 
-mysql-setup-schema: ## Drop the `recipe` schema if present and re-create it as well as the tables and the triggers
-	$(MAKE) mysql-drop-schema && $(MAKE) mysql-create-schema && $(MAKE) mysql-create-tables
+mysql-setup-local: ## Drop the `recipe` schema if present and re-create it as well as the tables and the triggers
+	$(MAKE) mysql-create-user && $(MAKE) mysql-drop-schema && $(MAKE) mysql-create-schema && $(MAKE) mysql-create-tables
 
 run-server-local: ## Run the REST API server locally
 	@ poetry run python -m flask --app src/api/app.py run --debugger
@@ -55,7 +55,19 @@ put-recipe-by-name: ## Make an API request to put (update) a recipe by its name.
 	-d "@api_examples/put_$(shell export PYTHONPATH=${PWD} && poetry run python scripts/clean_string.py "$(recipe)").json" \
 	http://localhost:5000/recipes/$(shell export PYTHONPATH=${PWD} && poetry run python scripts/clean_string.py "$(recipe)")
 
-
 delete-recipe-by-name: ## Make an API request to delete a recipe by its name. Must sprcify recipe=<recipe-name>
 	@ curl -X DELETE \
 	http://localhost:5000/recipes/$(shell export PYTHONPATH=${PWD} && poetry run python scripts/clean_string.py "$(recipe)")
+
+create-volume: ## Create a Docker volume where to persist the database tables when the DB container is shut down
+	@ docker volume create db-data
+
+build-compose: ## Build the Docker compose for the DB and the Flask App
+	@ $(MAKE) create-volume && \
+	docker compose --env-file .env build
+
+run-compose: ## Run the Docker compose for the DB and the Flask APP
+	@ $(MAKE) build-compose && 	docker compose --env-file .env up -d
+
+mysql-setup-docker:
+	@ docker exec -i mysqldb /bin/bash -c "mysql -iu root -p${MYSQL_ROOT_PASSWORD} ${MYSQL_DATABASE} < scripts/db/init.sql"

@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  app:
+    container_name: flaskapp
+    build:
+      context: ./
+      dockerfile: ./containers/Dockerfile
+    ports:
+      - "5000:5000"
+    networks:
+      - backend
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    command: gunicorn --bind 0.0.0.0:5000 src.api.app:app
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    container_name: mysqldb
+    image: mysql:8.0.31
+    ports:
+      - "${MYSQL_MAPPING_PORT}:3306"
+    restart: always
+    networks:
+      - backend
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./scripts/db:/scripts/db
+    healthcheck:
+      test: ["CMD", 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-p$$MYSQL_ROOT_PASSWORD']
+      start_period: 5s
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+networks:
+  backend:
+
+volumes:
+  db-data:

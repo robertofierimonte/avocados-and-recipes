@@ -15,11 +15,11 @@ from src.api.models import (
 
 
 # Read the environment variables
+mysql_user = os.environ.get("MYSQL_USER")
+mysql_pwd = os.environ.get("MYSQL_PASSWORD")
 mysql_host = os.environ.get("MYSQL_HOST", "localhost")
 mysql_port = os.environ.get("MYSQL_PORT", 3306)
-mysql_user = os.environ.get("MYSQL_USER", "root")
-mysql_pwd = os.environ.get("MYSQL_PASSWORD")
-mysql_db = "recipes"
+mysql_db = os.environ.get("MYSQL_DATABASE", "recipes")
 
 # Create the app
 app = Flask(__name__)
@@ -27,6 +27,7 @@ app.config[
     "SQLALCHEMY_DATABASE_URI"
 ] = f"mysql+pymysql://{mysql_user}:{mysql_pwd}@{mysql_host}:{mysql_port}/{mysql_db}"
 app.config["SQLALCHEMY_ECHO"] = True
+logger.info(app.config["SQLALCHEMY_DATABASE_URI"])
 
 # Create the extension and initialise the app with the extension
 db.init_app(app)
