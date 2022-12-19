@@ -13,20 +13,20 @@ download-data: ## Download the dataset inside the `data` folder
 	unzip -d data data/avocados.zip && \
 	rm -f data/avocados.zip
 
-mysql-create-user: ## Create a non-root MySQL user. Must have defined the environment variables in the .env file
+mysql-create-user: ## Create a non-root MySQL user. Must have defined the environment variables in the .env file. Executed from mysql-setup-local
 	@ mysql -h ${MYSQL_HOST} -u root -p${MYSQL_ROOT_PASSWORD} -e "CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'${MYSQL_HOST}' IDENTIFIED BY '${MYSQL_PASSWORD}';"
 
-mysql-create-schema: ## Create a `recipes` schema to use for the project and grant object access to the newly created user
+mysql-create-schema: ## Create a `recipes` schema to use for the project and grant object access to the newly created user. Executed from mysql-setup-local
 	@ mysql -h ${MYSQL_HOST} -u root -p${MYSQL_ROOT_PASSWORD} \
 	-e "CREATE SCHEMA IF NOT EXISTS ${MYSQL_DATABASE}; GRANT SELECT, INSERT, UPDATE, DELETE on ${MYSQL_DATABASE}.* TO ${MYSQL_USER}@${MYSQL_HOST};"
 
-mysql-drop-schema: ## Drop the `recipes` schema in case it needs to be recreated
+mysql-drop-schema: ## Drop the `recipes` schema in case it needs to be recreated. Executed from mysql-setup=-local
 	@ mysql -h ${MYSQL_HOST} -u root -p${MYSQL_ROOT_PASSWORD} -e "DROP SCHEMA IF EXISTS ${MYSQL_DATABASE};"
 
-mysql-create-tables: ## Create all the relevant tables and triggers in the `recipe` schema
+mysql-create-tables: ## Create all the relevant tables and triggers in the `recipe` schema. Executed from mysql-setup-local
 	@ mysql -h ${MYSQL_HOST} -iu root -p${MYSQL_ROOT_PASSWORD} ${MYSQL_DATABASE} < scripts/db/init.sql
 
-mysql-setup-local: ## Drop the `recipe` schema if present and re-create it as well as the tables and the triggers
+mysql-setup-local: ## Set up the MySQL environment locally. Drop the `recipe` schema if present and re-create it as well as the tables and the triggers
 	$(MAKE) mysql-create-user && $(MAKE) mysql-drop-schema && $(MAKE) mysql-create-schema && $(MAKE) mysql-create-tables
 
 run-server-local: ## Run the REST API server locally
@@ -66,8 +66,8 @@ build-compose: ## Build the Docker compose for the DB and the Flask App
 	@ $(MAKE) create-volume && \
 	docker compose --env-file .env build
 
-run-compose: ## Run the Docker compose for the DB and the Flask APP
-	@ $(MAKE) build-compose && 	docker compose --env-file .env up -d
+run-compose: ## Build and run the Docker compose for the DB and the Flask APP
+	@ docker compose --env-file .env up -d
 
-mysql-setup-docker:
+mysql-setup-docker: ## Set up the MySQL environment in the Docker compose. Must be executed after run-compose
 	@ docker exec -i mysqldb /bin/bash -c "mysql -iu root -p${MYSQL_ROOT_PASSWORD} ${MYSQL_DATABASE} < scripts/db/init.sql"

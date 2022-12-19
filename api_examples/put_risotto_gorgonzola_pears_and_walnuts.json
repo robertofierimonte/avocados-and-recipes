@@ -13,7 +13,7 @@
         },
         {
             "name": "Chicken Stock Cube",
-            "delete": "true"
+            "quantity": 0
         }
     ]
 }

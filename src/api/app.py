@@ -27,7 +27,6 @@ app.config[
     "SQLALCHEMY_DATABASE_URI"
 ] = f"mysql+pymysql://{mysql_user}:{mysql_pwd}@{mysql_host}:{mysql_port}/{mysql_db}"
 app.config["SQLALCHEMY_ECHO"] = True
-logger.info(app.config["SQLALCHEMY_DATABASE_URI"])
 
 # Create the extension and initialise the app with the extension
 db.init_app(app)
@@ -99,7 +98,7 @@ def recipe(recipe_name: str):
                     db.session.add(recipe_ingredient)
                 # Commit all the changes to the database
                 db.session.commit()
-                return recipe_schema.jsonify(recipe)
+                return recipe_schema.jsonify(recipe), 201
             # If the ingredients are not in the request, return an error (400)
             except KeyError as e:
                 jsonify(
@@ -112,7 +111,7 @@ def recipe(recipe_name: str):
     # If GET, get the recipe or return 404 Not Found
     elif request.method == "GET":
         recipe = db.get_or_404(Recipe, recipe_id)
-        return recipe_schema.jsonify(recipe)
+        return recipe_schema.jsonify(recipe), 200
 
     # If PUT, update the recipe
     elif request.method == "PUT":
@@ -129,7 +128,7 @@ def recipe(recipe_name: str):
                     ing_id = hash_string(clean_string(ing_name), 18)
                     # If the ingredient is not part of the recipe anymore,
                     # delete it from the mapping table
-                    if "delete" in ing and ing["delete"] == "true":
+                    if "quantity" in ing and ing["quantity"] == 0:
                         recipe_ingredient = RecipeIngredients.query.get_or_404(
                             (recipe_id, ing_id)
                         )
@@ -173,7 +172,7 @@ def recipe(recipe_name: str):
         # Commit all the changes to the database
         db.session.merge(recipe)
         db.session.commit()
-        return recipe_schema.jsonify(recipe)
+        return recipe_schema.jsonify(recipe), 200
 
     # If DELETE, delete the recipe
     elif request.method == "DELETE":
@@ -213,6 +212,7 @@ def recipes_by_ingredient(ingredient_name: str):
     recipe_ids = db.select(RecipeIngredients.recipe_id).where(
         RecipeIngredients.ingredient_id == ing_id
     )
+    # TODO: return 404 Not Found if ing_id does not exist
     # Return the recipes
     recipes = Recipe.query.filter(Recipe.id.in_(recipe_ids)).all()
     result = recipes_schema.dump(recipes)
