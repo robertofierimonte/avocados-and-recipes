@@ -81,6 +81,11 @@ def recipe(recipe_name: str):
                 for ing in ingredients:
                     ing_name = ing["name"]
                     ing_id = hash_string(clean_string(ing_name), 18)
+                    logger.debug(
+                        f"Ingredient Name: {ing_name}, "
+                        f"Cleaned Ingredient Name: {clean_string(ing_name)}, "
+                        f"Ingredient ID: {ing_id} ."
+                    )
                     ing_uom = ing["unit_of_measure"]
                     ing_qty = ing["quantity"]
                     ingredient = Ingredient(
@@ -126,6 +131,11 @@ def recipe(recipe_name: str):
                 for ing in ingredients:
                     ing_name = ing.pop("name")
                     ing_id = hash_string(clean_string(ing_name), 18)
+                    logger.debug(
+                        f"Ingredient Name: {ing_name}, "
+                        f"Cleaned Ingredient Name: {clean_string(ing_name)}, "
+                        f"Ingredient ID: {ing_id} ."
+                    )
                     # If the ingredient is not part of the recipe anymore,
                     # delete it from the mapping table
                     if "quantity" in ing and ing["quantity"] == 0:
@@ -207,12 +217,16 @@ def recipes_by_ingredient(ingredient_name: str):
         ingredient_name (str): Name of the ingredient
     """
     # Get the ingredient ID
-    ing_id = hash_string(clean_string(ingredient_name), 18)
+    ing_id = hash_string(ingredient_name, 18)
+    logger.debug(
+        f"Cleaned Ingredient Name: {ingredient_name}, " f"Ingredient ID: {ing_id} ."
+    )
+    # Return 404 Not Found is the ing_id does not exist
+    ingredient = db.get_or_404(Ingredient, ing_id)
     # Get all the recipe ID from the mapping table that are associate with the ingredient ID
     recipe_ids = db.select(RecipeIngredients.recipe_id).where(
         RecipeIngredients.ingredient_id == ing_id
     )
-    # TODO: return 404 Not Found if ing_id does not exist
     # Return the recipes
     recipes = Recipe.query.filter(Recipe.id.in_(recipe_ids)).all()
     result = recipes_schema.dump(recipes)
