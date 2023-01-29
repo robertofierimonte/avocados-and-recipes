@@ -5,6 +5,10 @@ import pandas as pd
 from numba import jit
 
 
+def get_previous_price():
+    pass
+
+
 @jit(cache=True, nopython=True)
 def sin_transformer(arr: np.ndarray, period: float) -> np.ndarray:
     """Transform the input into a sine function.

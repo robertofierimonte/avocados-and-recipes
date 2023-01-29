@@ -41,6 +41,7 @@ class LinearRegression:
         """Initialise the object."""
         self._W = None
         self._b = None
+        self._res = None
 
     def fit(self, X: np.array, y: np.array) -> None:
         """Fit the model on the training data.
@@ -49,13 +50,19 @@ class LinearRegression:
             X (np.array): (N, p) Training input data
             y (np.array): (N, ) Training target variable
         """
+        # Get the number of training samples
         N, _ = X.shape
+        # Add the bias
         X_bias = np.concatenate([np.ones((N, 1)), X], axis=1)
         logger.debug(f"X_b shape: {X_bias.shape} .")
+        # Compute the LR coefficients
         A = np.linalg.pinv(X_bias) @ y
         logger.debug(f"A shape: {A.shape} .")
         self._W = A[1:]
         self._b = A[0]
+        # Compute the residuals
+        y_pred = X_bias @ A
+        sse = np.sum((y - y_pred) ** 2)
 
     def predict(self, X: np.array) -> np.array:
         """Generate predictions for the test data.
@@ -95,3 +102,6 @@ class LinearRegression:
         os.makedirs(directory, exist_ok=True)
         joblib.dump(self, file_name)
         logger.info(f"Saved model to {file_name} .")
+
+    def feature_importance(self):
+        pass
