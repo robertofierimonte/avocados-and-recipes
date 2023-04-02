@@ -71,7 +71,7 @@ Please note that the two tasks are independent and can be tested and executed in
 ### Repo structure
 
 ```
-avocados-technical-task
+avocados-and-recipes
 ├── api_examples
 ├── containers
 ├── data
