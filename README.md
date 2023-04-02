@@ -3,12 +3,12 @@
 <!-- PROJECT LOGO -->
 <br>
 <div align="center">
-  <a href="https://bitbucket.org/robertofierimonte/avocados-technical-task/">
+  <a href="https://bitbucket.org/robertofierimonte/avocados-and-recipes/">
     <img src="docs/images/logo.png" alt="Logo" height="350">
   </a>
 
-<h2 align="center">Avocados Technical Task</h2>
-  <p>Technical task about building a simple ML model in Numpy and a Flask Rest API for CRUD operations.<br>
+<h2 align="center">Avocados and Recipes</h2>
+  <p>Technical project about building a simple ML model in Numpy and a Flask Rest API for CRUD operations.<br>
   Author: <a href="mailto:roberto.fierimonte@gmail.com"><b>Roberto Fierimonte</b></a></p>
 </div>
 
@@ -34,13 +34,13 @@
 <!-- ABOUT THE PROJECT -->
 ## About the Project
 
-Generic takehome task for a Data Science / Machine Learning Engineer position.
+Generic Data Science / Machine Learning Engineering project to improve technical skills.
 
 <u>Requirements</u>:
 
 1. Create a linear regression model estimating the function `y=f(x)` that represents the price of Avocados based on historical data. Furthermore, information related to the features that most drive this change in price should be pointed out.
 
-    This should be done using only numpy and basic python - i.e not using higher-level packages. Basic machine learning consideration when preprocessing and handling data need to be taken into consideration. Lines of code should be commented thoroughly to show understanding.
+    This should be done using only numpy and basic python - i.e not using higher-level packages. Basic machine learning considerations when preprocessing and handling data need to be taken into consideration. Lines of code should be commented thoroughly to show understanding.
 
     [Link to dataset](​https://drive.google.com/file/d/1rhRzA2s44I8ASm_bMHnCpmAz_mNJQ7M3/view?usp=sharing)
 
@@ -65,13 +65,13 @@ Please note that the two tasks are independent and can be tested and executed in
 - Python 3.9 (we are using version `3.9.7`)
 - [poetry](https://python-poetry.org/) (we are using version `1.2.2`)
 - [pre-commit](https://pre-commit.com/)
-- [Docker](https://www.docker.com/) (must have suppport for Docker Compose `v3` - we are using version `20.10.21`)
+- [Docker](https://www.docker.com/) (must have support for Docker Compose `v3` - we are using version `20.10.21`)
 - [MySQL](https://www.mysql.com/) (optional for local testing - we are using version `8.0.31`)
 
 ### Repo structure
 
 ```
-avocados-technical-task
+avocados-and-recipes
 ├── api_examples
 ├── containers
 ├── data
@@ -89,7 +89,7 @@ avocados-technical-task
 - The `data` folder is empty and it will be populated with the dataset after completing the local setup
 - The `docs` folder contains the documentation about the project
 - The `model` folder is empty and it will be populated with the serialised ML model files after running the training notebook
-- The `notebooks` folder contains the notebooks for exploratory analysis over the data, as well as the training and testing of the model
+- The `notebooks` folder contains the notebooks for exploratory analysis on the data, as well as the training and testing of the model
 - The `scripts` subfolder contains the script to initialise the MySQL database, as well as a function to clean the recipe name before feeding it to the API
 - The `src` folder contains the source code for the project:
    - The `api` subfolder contains the code to run the Flask App
@@ -119,9 +119,9 @@ Reference to section <a href="#using-the-api">Using the API</a> for more info on
 
 Alongside running the API locally we provide the option to use Docker compose to host both the API and the MySQL database on containers. We do this through [Docker Compose](https://docs.docker.com/compose/). You can find the configuration for the systems in the [docker-compose.yml](./docker-compose.yml) file.
 
-We defined two containers to be used in this application - the first container hosts the MySQL database and the second container hosts the Flask App. The App container is dependent on the MySQL container to be healthy before being spun up. Also the two containers will share a network. The Docker application can be built by running `make build-compose` (before starting it up for the first time or when changes are made to it), started by running `make run-compose`, and stopped by running `docker compose down`. After starting the application for the first time (or if you have deleted the database volume - see below) run `make mysql-setup-docker` to instantiate the database, tables, and triggers. This steps solves the issue of the syntax for MySQL triggers causing an error when trying to initiate the database using the native docker entrypoint.
+We defined two containers to be used in this application - the first container hosts the MySQL database and the second container hosts the Flask App. The App container is dependent on the MySQL container to be healthy before being spun up. Also, the two containers will share a network. The Docker application can be built by running `make build-compose` (before starting it up for the first time or when changes are made to it), started by running `make run-compose`, and stopped by running `docker compose down`. After starting the application for the first time (or if you have deleted the database volume - see below) run `make mysql-setup-docker` to instantiate the database, tables, and triggers. This step solves the issue of the syntax for MySQL triggers causing an error when trying to initiate the database using the native docker entrypoint.
 
-The MySQL container uses a volume to persist the database, so that when the containers are shut down the database is restore and available for future sessions. To delete the volume at the same time of stopping the application, run `docker compose down -v`. **N.B.: this will remove all the tables** and you'll have to re-create them using the `make mysql-setup-docker` command before being able to use the API again.
+The MySQL container uses a volume to persist the database, so that when the containers are shut down the database is restored and available for future sessions. To delete the volume at the same time of stopping the application, run `docker compose down -v`. **N.B.: this will remove all the tables** and you'll have to re-create them using the `make mysql-setup-docker` command before being able to use the API again.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
