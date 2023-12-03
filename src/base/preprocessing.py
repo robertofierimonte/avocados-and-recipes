@@ -135,7 +135,7 @@ class RepeatingRadialBasisFunction:
         # periods
         self.width /= self.n_periods
 
-    def transform(self, X: Union[pd.Series, np.ndarray]) -> np.array:
+    def transform(self, X: Union[pd.Series, np.ndarray]) -> np.ndarray:
         """Transform the inputs by applying the Repeating RBFs.
 
         Args:
@@ -143,7 +143,7 @@ class RepeatingRadialBasisFunction:
                 feature
 
         Returns:
-            np.array: (N, self.n_periods) Transformed input values
+            np.ndarray: (N, self.n_periods) Transformed input values
         """
         # If X is an Numpy array, ensure it has only one dimension
         if isinstance(X, np.ndarray):

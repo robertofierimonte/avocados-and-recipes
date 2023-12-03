@@ -10,8 +10,13 @@ pre-commit: ## Run the pre-commit over the entire repo
 
 download-data: ## Download the dataset inside the `data` folder
 	@curl -o data/avocados.zip -L "https://drive.google.com/uc?export=download&id=1rhRzA2s44I8ASm_bMHnCpmAz_mNJQ7M3" && \
-	unzip -d data data/avocados.zip && \
-	rm -f data/avocados.zip
+		unzip -d data data/avocados.zip && \
+		rm -f data/avocados.zip
+
+setup: ## Install all the required Python dependencies, download the data, and create a jupyter kernel for the project
+	@poetry install --sync && \
+		poetry run python -m ipykernel install --user --name="avocados-and-recipes-venv" && \
+		$(MAKE) download-data
 
 mysql-create-user: ## Create a non-root MySQL user. Must have defined the environment variables in the .env file. Executed from mysql-setup-local
 	@ mysql -h ${MYSQL_HOST} -u root -p${MYSQL_ROOT_PASSWORD} -e "CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'${MYSQL_HOST}' IDENTIFIED BY '${MYSQL_PASSWORD}';"
@@ -40,31 +45,31 @@ get-all-ingredients: ## Make an API request to get all the ingredients
 
 get-recipe-by-name: ## Make an API request to get a recipe by its name. Must specify recipe=<recipe-name>
 	@ curl -X GET \
-	http://localhost:5000/recipes/$(shell export PYTHONPATH=${PWD} && poetry run python scripts/clean_string.py "$(recipe)")
+		http://localhost:5000/recipes/$(shell export PYTHONPATH=${PWD} && poetry run python scripts/clean_string.py "$(recipe)")
 
 get-recipes-by-ingredient: ## Make an API request to get all recipes given an ingredient. Must specify ingredient=<ingredient-name>
 	@ curl -X GET http://localhost:5000/ingredients/$(shell export PYTHONPATH=${PWD} && poetry run python scripts/clean_string.py "$(ingredient)")/recipes
 
 post-recipe-by-name: ## Make an API request to post a recipe by its name. Must specify recipe=<recipe-name>
 	@ curl -X POST -H "Content-Type: application/json" \
-	-d "@api_examples/post_$(shell export PYTHONPATH=${PWD} && poetry run python scripts/clean_string.py "$(recipe)").json" \
-	http://localhost:5000/recipes/$(shell export PYTHONPATH=${PWD} && poetry run python scripts/clean_string.py "$(recipe)")
+		-d "@api_examples/post_$(shell export PYTHONPATH=${PWD} && poetry run python scripts/clean_string.py "$(recipe)").json" \
+		http://localhost:5000/recipes/$(shell export PYTHONPATH=${PWD} && poetry run python scripts/clean_string.py "$(recipe)")
 
 put-recipe-by-name: ## Make an API request to put (update) a recipe by its name. Must specify recipe=<recipe-name>
 	@ curl -X PUT -H "Content-Type: application/json" \
-	-d "@api_examples/put_$(shell export PYTHONPATH=${PWD} && poetry run python scripts/clean_string.py "$(recipe)").json" \
-	http://localhost:5000/recipes/$(shell export PYTHONPATH=${PWD} && poetry run python scripts/clean_string.py "$(recipe)")
+		-d "@api_examples/put_$(shell export PYTHONPATH=${PWD} && poetry run python scripts/clean_string.py "$(recipe)").json" \
+		http://localhost:5000/recipes/$(shell export PYTHONPATH=${PWD} && poetry run python scripts/clean_string.py "$(recipe)")
 
 delete-recipe-by-name: ## Make an API request to delete a recipe by its name. Must sprcify recipe=<recipe-name>
 	@ curl -X DELETE \
-	http://localhost:5000/recipes/$(shell export PYTHONPATH=${PWD} && poetry run python scripts/clean_string.py "$(recipe)")
+		http://localhost:5000/recipes/$(shell export PYTHONPATH=${PWD} && poetry run python scripts/clean_string.py "$(recipe)")
 
 create-volume: ## Create a Docker volume where to persist the database tables when the DB container is shut down
 	@ docker volume create db-data
 
 build-compose: ## Build the Docker compose for the DB and the Flask App
 	@ $(MAKE) create-volume && \
-	docker compose --env-file .env build
+		docker compose --env-file .env build
 
 run-compose: ## Build and run the Docker compose for the DB and the Flask APP
 	@ docker compose --env-file .env up -d

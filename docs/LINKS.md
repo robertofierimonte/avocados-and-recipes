@@ -9,6 +9,16 @@ In this document we provide a collection, grouped by topic, of links that have r
 - [SKLego: Repeating Radial Basis Function](https://scikit-lego.netlify.app/api/preprocessing.html?highlight=radial#sklego.preprocessing.RepeatingBasisFunction)
 - [Docs: Numba](https://numba.readthedocs.io/en/stable/index.html)
 
+## Statistical Tests for Linear Regression
+
+- [Medium: Hypothesis Testing on Linear Regression](https://medium.com/nerd-for-tech/hypothesis-testing-on-linear-regression-c2a1799ba964)
+- [Towards Data Science: All the Statistical Tests You Must Do for a Good Linear Regression](https://towardsdatascience.com/all-the-statistical-tests-you-must-do-for-a-good-linear-regression-6ec1ac15e5d4)
+- [Stackexchange: How are the standard errors of coefficients calculated in a regression?](https://stats.stackexchange.com/questions/44838/how-are-the-standard-errors-of-coefficients-calculated-in-a-regression)
+- [Towards Data Science: The Complete Guide to Linear Regression Analysis](https://towardsdatascience.com/the-complete-guide-to-linear-regression-analysis-38a421a89dc2)
+- [Estimating σ, the standard error of the residuals ](https://stats.libretexts.org/Bookshelves/Introductory_Statistics/Inferential_Statistics_and_Probability_-_A_Holistic_Approach_(Geraghty)/14%3A_Correlation_and_Linear_Regression/14.05%3A_Estimating_(_sigma)_the_standard_error_of_the_residuals)
+- [StackExchange: What's the variance of intercept estimator in multiple linear regression?](https://math.stackexchange.com/questions/2916052/whats-the-variance-of-intercept-estimator-in-multiple-linear-regression)
+
+
 ## MySQL
 
 - [Docs: MySQL documentation](https://dev.mysql.com/doc/)
@@ -25,8 +35,13 @@ In this document we provide a collection, grouped by topic, of links that have r
 - [Auth0: Best practices for Flask API development](https://auth0.com/blog/best-practices-for-flask-api-development/)
 - [Auth0: SQLAlchemy ORM Tutorial for Python Developers](https://auth0.com/blog/sqlalchemy-orm-tutorial-for-python-developers/)
 - [AskPython: Flask MySQL – Setting up a Flask and MySQL Database Connection](https://www.askpython.com/python-modules/flask/flask-mysql-database)
+- [Medium: HTTP Response Codes for CRUD](https://medium.com/geekculture/http-response-codes-for-crud-eabdda3ed617)
 - [Medium: Flask route: a complete overview](https://medium.com/analytics-vidhya/flask-route-a-complete-overview-d66065bfa867)
 - [Medium: SQLAlchemy ORM: Setting Up Self-Referential Many-to-Many Relationships](https://blog.ramosly.com/sqlalchemy-orm-setting-up-self-referential-many-to-many-relationships-866c97d9308b)
+- [Medium: Flask, MySQL, and AWS: A Complicated Love Triangle](https://betterprogramming.pub/flask-mysql-and-aws-a-complicated-love-triangle-8ea5588e40ac)
+- [Moesif: Which HTTP Status Code to Use for Every CRUD App](https://www.moesif.com/blog/technical/api-design/Which-HTTP-Status-Code-To-Use-For-Every-CRUD-App/)
+- [Tutorialsplus: Creating a Web App From Scratch Using Python Flask and MySQL](https://code.tutsplus.com/tutorials/creating-a-web-app-from-scratch-using-python-flask-and-mysql--cms-22972)
+- [OverIQ: Database Modelling in Flask](https://overiq.com/flask-101/database-modelling-in-flask/)
 - [SO: Using MySQL in Flask](https://stackoverflow.com/questions/9845102/using-mysql-in-flask)
 - [SO: Can't join tow tables with two foreign keys between them](https://stackoverflow.com/questions/39511232/sqlalchemy-cant-join-two-tables-with-two-foreign-keys-between-them)
 - [SO: SQLAlchemy in_ subquery](https://stackoverflow.com/questions/37792261/sqlalchemy-in-subquery)

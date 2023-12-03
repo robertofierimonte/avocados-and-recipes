@@ -100,11 +100,10 @@ avocados-and-recipes
 In the repository, execute:
 
 1. Install poetry if not available: `pip install poetry==1.2.2`
-2. Install the required dependencies: `poetry install`
+2. Install the required dependencies: `make setup`
 3. Install pre-commit hooks: `poetry run pre-commit install`
-4. Download the dataset by running `make download-data`
-5. Follow the instructions in the `.env.example` to set up the necessary environment variables
-6. Run `make help` to see all the options provided in the Makefile
+4. Follow the instructions in the `.env.example` to set up the necessary environment variables
+5. Run `make help` to see all the options provided in the Makefile
 
 To run the code locally (on your machine):
 
@@ -141,7 +140,7 @@ The API provides the following entry-points:
 
 A description for all the previous commands is also available by running `make help`.
 
-When running the commands from the Makefile, first the `<recipe-name>` and the `<ingredient-name>` will be cleaned by making them lowercase, removing all alphabetical characters, and replacing whitespaces with underscores. This is done by running the [clean_string.py](./scripts/clean_string.py) script on the string. Afterwards, in case of POST or PUT requests related to a recipe, a `.json` file will be looked in the `api_examples` folder corresponding to the cleaned `<recipe-name>` and that will be passed as a payload to the API call.
+When running the commands from the Makefile, first the `<recipe-name>` and the `<ingredient-name>` will be sanitised by making them lowercase, removing all non-alphabetical characters, and replacing whitespaces with underscores. This is done by running the [clean_string.py](./scripts/clean_string.py) script on the string. Afterwards, in case of POST or PUT requests related to the API, a `.json` file will be looked for in the `api_examples` folder corresponding to the sanitised `<recipe-name>` and that will be passed as a payload to the API call.
 
 For example, when running the command `make post-recipe-by-name recipe="Risotto gorgonzola, pears, and walnuts"`, the `<recipe-name>` will be cleaned to become `risotto_gorgonzola_pears_walnuts`, a file `post_risotto_gorgonzola_pears_walnuts.json` will be looked up inside [the `api_examples` folder](./api_examples/) and it will be used as the payload for the request to create the new recipe.
 
