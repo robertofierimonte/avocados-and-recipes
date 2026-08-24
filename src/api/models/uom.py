@@ -3,7 +3,6 @@ from sqlalchemy.schema import FetchedValue
 
 from src.api.database import db, ma
 
-
 uom_conversion = db.Table(
     "uom_conversion",
     db.Model.metadata,
