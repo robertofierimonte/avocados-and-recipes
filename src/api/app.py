@@ -13,7 +13,6 @@ from src.api.models import (
     RecipeIngredients,
 )
 
-
 # Read the environment variables
 mysql_user = os.environ.get("MYSQL_USER")
 mysql_pwd = os.environ.get("MYSQL_PASSWORD")
@@ -23,9 +22,9 @@ mysql_db = os.environ.get("MYSQL_DATABASE", "recipes")
 
 # Create the app
 app = Flask(__name__)
-app.config[
-    "SQLALCHEMY_DATABASE_URI"
-] = f"mysql+pymysql://{mysql_user}:{mysql_pwd}@{mysql_host}:{mysql_port}/{mysql_db}"
+app.config["SQLALCHEMY_DATABASE_URI"] = (
+    f"mysql+pymysql://{mysql_user}:{mysql_pwd}@{mysql_host}:{mysql_port}/{mysql_db}"
+)
 app.config["SQLALCHEMY_ECHO"] = True
 
 # Create the extension and initialise the app with the extension
